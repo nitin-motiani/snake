@@ -329,14 +329,14 @@ var point_on_segment = function(first_end, second_end, point) {
             && point.y <= second_end.y
             && point.y >= first_end.y)
         {
-            console.log("i am gonna return true");
+            //console.log("i am gonna return true");
             return true;
         }
         if (first_end.y >= second_end.y
             && point.y >= second_end.y 
             && point.y <= first_end.y)
         {
-            console.log("i am gonna return true");
+            //console.log("i am gonna return true");
             return true;
         }
        return false;
@@ -351,14 +351,14 @@ var point_on_segment = function(first_end, second_end, point) {
             && point.x <= second_end.x
             && point.x >= first_end.x)
         {
-            console.log("i am gonna return true");
+            //console.log("i am gonna return true");
             return true;
         }
         if (first_end.x >= second_end.x
             && point.x >= second_end.x 
             && point.x <= first_end.x)
         {
-            console.log("i am gonna return true");
+            //console.log("i am gonna return true");
             return true;
         }
        return false;
@@ -403,7 +403,7 @@ var can_eat = function() {
 
 //a real pain in the ass.
 var collide_with_itself = function() {
-    console.log("I'm in collide");
+    //console.log("I'm in collide");
     //console.log("My head is at " + snake.head.x + ", " + snake.head.y);
     var first_end;
     var second_end;
@@ -414,24 +414,32 @@ var collide_with_itself = function() {
     {
         return false;
     }
-    if(no_of_turns === 4)
+    /*if(no_of_turns === 4)
     {
-        console.log("My head is at " + snake.head.x + ", " + snake.head.y);
-    }
+        //console.log("My head is at " + snake.head.x + ", " + snake.head.y);
+    }*/
 
-    for(turn_no = no_of_turns - 2; turn_no > 0; turn_no--)
+
+    //start from no_of_turns - 3, as previous ones not required....
+    for(turn_no = no_of_turns - 3; turn_no > 0; turn_no--)
     {
         first_end = snake.turns[turn_no];
         second_end = snake.turns[turn_no - 1];
         if(no_of_turns == 4)
         {
-            console.log("First end is " + first_end.x + ", " + first_end.y);
-            console.log("Second end is " + second_end.x + ", " + second_end.y);
+            //console.log("First end is " + first_end.x + ", " + first_end.y);
+            //console.log("Second end is " + second_end.x + ", " + second_end.y);
         }
         //if(point_on_segment(first_end, second_end, 
                                 //snake.head))
         if(lines_intersect (first_end, second_end, snake.head, snake.turns[no_of_turns - 1]))
         {
+            console.log("total no. of turns are " + no_of_turns);
+            console.log("turn no is " + turn_no);
+            console.log("head is at " + snake.head.x + ", " + snake.head.y);
+            console.log("first turn is at " + snake.turns[no_of_turns - 1].x + ", " + snake.turns[no_of_turns - 1].y);
+            console.log("first end is at " + first_end.x + ", " + first_end.y);
+            console.log("Second end is at " + second_end.x + ", " + second_end.y);
             return true;
         }
         first_end = second_end;
@@ -440,13 +448,19 @@ var collide_with_itself = function() {
     second_end = snake.tail;
     if(no_of_turns == 4)
     {
-        console.log("First end is " + first_end.x + ", " + first_end.y);
-        console.log("Second end is " + second_end.x + ", " + second_end.y);
+        //console.log("First end is " + first_end.x + ", " + first_end.y);
+        //console.log("Second end is " + second_end.x + ", " + second_end.y);
     }
    // if(point_on_segment(first_end, second_end, 
                                 //snake.head))
     if(lines_intersect (first_end, second_end, snake.head, snake.turns[no_of_turns - 1]))
-    {
+    {  
+        console.log("total no. of turns are " + no_of_turns);
+        console.log("turn no is " + turn_no);
+        console.log("head is at " + snake.head.x + ", " + snake.head.y);
+        console.log("first turn is at " + snake.turns[no_of_turns - 1].x + ", " + snake.turns[no_of_turns - 1].y);
+        console.log("first end is at " + first_end.x + ", " + first_end.y);
+        console.log("Second end is at " + second_end.x + ", " + second_end.y);
         return true;
     }
     return false;
@@ -543,14 +557,14 @@ var main = function() {
     }
     if(collide_with_wall())
     {
-        console.log("i collided with wall");
-        console.log("x " + snake.head.x + "y " + snake.head.y);
+        //console.log("i collided with wall");
+        //console.log("x " + snake.head.x + "y " + snake.head.y);
         reset_snake();
     }
 
     if(can_eat())
     {
-        console.log("ate the food");
+        //console.log("ate the food");
         //snake.head.x += snake.speed.x*50;
         //snake.head.y += snake.speed.y*50;             //how, how, how??? such a stupid mistake... x-(
 
@@ -562,7 +576,7 @@ var main = function() {
         snake.length += movement_speed*2;
 
         create_food();
-        console.log("new length : " + snake.length);
+        //console.log("new length : " + snake.length);
     }
     render();
     then = now;
