@@ -123,11 +123,11 @@ var get_new_position = function(time)
     {
         if (second_end.x < first_end.x)
         {
-            second_end.x = first_end.x - remaining_length;
+            snake.tail.x = first_end.x - remaining_length;
         }
         else
         {
-            second_end.x = first_end.x + remaining_length;
+            snake.tail.x = first_end.x + remaining_length;
         }
         snake.tail.y = first_end.y;     //added later, to avoid any problem
     }
@@ -205,6 +205,119 @@ var update = function () {
 
 };
 
+var lines_intersect = function (first_end1, second_end1, first_end2, second_end2)
+{
+    var x_dir1 = false;
+    var y_dir1 = false;
+    var x_dir2 = false;
+    var y_dir2 = false;
+
+    
+    if(first_end1.x === second_end1.x)
+    {
+        x_dir1 = true;
+    }
+    if(first_end2.x === second_end2.x)
+    {
+        x_dir2 = true;
+    }
+
+    if(first_end1.y === second_end1.y)
+    {
+        y_dir1 = true;
+    }
+    if(first_end2.y === second_end2.y)
+    {
+        y_dir2 = true;
+    }
+
+    if((x_dir1 && x_dir2)
+        || (y_dir1 && y_dir2))
+    {
+        if (point_on_segment (first_end1, second_end1,
+                                first_end2)
+            || point_on_segment(first_end1, second_end1,
+                                second_end2))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    else
+    {
+        var common_x;
+        var common_y;
+        var min_x;
+        var min_y;
+        var max_x;
+        var max_y;
+        
+        if(x_dir1 && y_dir2)
+        {
+            common_x = first_end1.x;
+            common_y = first_end2.y;
+
+            if (first_end1.y < second_end1.y)
+            {
+                min_y = first_end1.y;
+                max_y = second_end1.y
+            }
+            else
+            {
+                min_y = second_end1.y;
+                max_y = first_end1.y
+            }
+
+            if (first_end2.x < second_end2.x)
+            {
+                min_x = first_end2.x;
+                max_x = second_end2.x
+            }
+            else
+            {
+                min_x = second_end2.x;
+                max_x = first_end2.x
+            }
+        }
+        if(x_dir2 && y_dir1)
+        {
+            common_x = first_end2.x;
+            common_y = first_end1.y;
+
+            if (first_end2.y < second_end1.y)
+            {
+                min_y = first_end2.y;
+                max_y = second_end2.y
+            }
+            else
+            {
+                min_y = second_end2.y;
+                max_y = first_end2.y
+            }
+
+            if (first_end1.x < second_end1.x)
+            {
+                min_x = first_end1.x;
+                max_x = second_end1.x
+            }
+            else
+            {
+                min_x = second_end1.x;
+                max_x = first_end1.x
+            }
+        }
+
+        var x_lies_in_between = (common_x <= max_x && common_x >= min_x);
+        var y_lies_in_between = (common_y <= max_y && common_y >= min_y);
+
+        return (x_lies_in_between && y_lies_in_between);
+    }
+    
+};
+
 var point_on_segment = function(first_end, second_end, point) {
     if (first_end.x === second_end.x)
     {
@@ -216,12 +329,14 @@ var point_on_segment = function(first_end, second_end, point) {
             && point.y <= second_end.y
             && point.y >= first_end.y)
         {
+            console.log("i am gonna return true");
             return true;
         }
         if (first_end.y >= second_end.y
             && point.y >= second_end.y 
             && point.y <= first_end.y)
         {
+            console.log("i am gonna return true");
             return true;
         }
        return false;
@@ -236,12 +351,14 @@ var point_on_segment = function(first_end, second_end, point) {
             && point.x <= second_end.x
             && point.x >= first_end.x)
         {
+            console.log("i am gonna return true");
             return true;
         }
         if (first_end.x >= second_end.x
             && point.x >= second_end.x 
             && point.x <= first_end.x)
         {
+            console.log("i am gonna return true");
             return true;
         }
        return false;
@@ -286,25 +403,49 @@ var can_eat = function() {
 
 //a real pain in the ass.
 var collide_with_itself = function() {
+    console.log("I'm in collide");
+    //console.log("My head is at " + snake.head.x + ", " + snake.head.y);
     var first_end;
     var second_end;
     var turn_no;
     var no_of_turns = snake.turns.length;
+    //console.log("No. of turns are " + no_of_turns);
+    if (no_of_turns < 3)            // i guess it's correct... because minimum 3 turns should be there for a collision
+    {
+        return false;
+    }
+    if(no_of_turns === 4)
+    {
+        console.log("My head is at " + snake.head.x + ", " + snake.head.y);
+    }
 
-    for(turn_no = no_of_turns - 1; turn_no > 0; turn_no--)
+    for(turn_no = no_of_turns - 2; turn_no > 0; turn_no--)
     {
         first_end = snake.turns[turn_no];
         second_end = snake.turns[turn_no - 1];
-        if(point_on_segment(first_end, second_end, 
-                                snake.head))
+        if(no_of_turns == 4)
+        {
+            console.log("First end is " + first_end.x + ", " + first_end.y);
+            console.log("Second end is " + second_end.x + ", " + second_end.y);
+        }
+        //if(point_on_segment(first_end, second_end, 
+                                //snake.head))
+        if(lines_intersect (first_end, second_end, snake.head, snake.turns[no_of_turns - 1]))
         {
             return true;
         }
         first_end = second_end;
     }
+    
     second_end = snake.tail;
-    if(point_on_segment(first_end, second_end, 
-                                snake.head))
+    if(no_of_turns == 4)
+    {
+        console.log("First end is " + first_end.x + ", " + first_end.y);
+        console.log("Second end is " + second_end.x + ", " + second_end.y);
+    }
+   // if(point_on_segment(first_end, second_end, 
+                                //snake.head))
+    if(lines_intersect (first_end, second_end, snake.head, snake.turns[no_of_turns - 1]))
     {
         return true;
     }
@@ -395,11 +536,11 @@ var main = function() {
     get_new_position(delta/1000);
     
     //stupid me, forgot to put parantheses to invoke the function... he ram
-    /*if(collide_with_itself() || collide_with_wall())
+    if(collide_with_itself() )
     {
         console.log("i collided");
         reset_snake();
-    }*/
+    }
     if(collide_with_wall())
     {
         console.log("i collided with wall");
